@@ -1,0 +1,8 @@
+{
+    "aws_region": "us-east-1",
+    "from_email":"chris@zingel.co.nz",
+    "to_email":"chris@zingel.co.nz",
+    "recipient": "chris@zingel.co.nz",
+    "bucket_name": "email-file-attachments-auto2",
+    "subject": "Test Email from Lambda"
+}

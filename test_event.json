@@ -1,0 +1,16 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "s3": {
+        "bucket": {
+          "name": "email-file-attachments-auto2"
+        },
+        "object": {
+          "key": "Screenshot.png"
+        }
+      }
+    }
+  ]
+}
