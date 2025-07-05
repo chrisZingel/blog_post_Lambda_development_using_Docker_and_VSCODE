@@ -45,6 +45,7 @@ class EmailAttachmentHandler:
                 "body": json.dumps("Email sent successfully!")
             }
 
+
     def retrive_first_key(self):
         record = self.event["Records"][0]
         key = record["s3"]["object"]["key"]
