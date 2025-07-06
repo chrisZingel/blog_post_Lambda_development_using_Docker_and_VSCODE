@@ -1,0 +1,9 @@
+
+{
+    "aws_region": "us-east-1",
+    "from_email":"your@email.com",
+    "to_email":"your@email.com",
+    "recipient": "your@email.com",
+    "bucket_name": "bucket_name",
+    "subject": "Subject of the email"
+}
