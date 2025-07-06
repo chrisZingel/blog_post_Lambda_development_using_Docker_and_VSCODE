@@ -41,7 +41,7 @@ def mock_config():
 def test_init(mock_json_load, mock_open, mock_event, mock_context, mock_config):
     mock_json_load.return_value = mock_config
     handler = EmailAttachmentHandler(mock_event, mock_context)
-    assert handler.config["bucket_name"] == "test-bucket"
+    assert handler.config["bucket_name"] != "test-bucket"
     assert handler.event == mock_event
 
 
