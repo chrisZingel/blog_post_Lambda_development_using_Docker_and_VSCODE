@@ -3,6 +3,6 @@
     "from_email":"chris@zingel.co.nz",
     "to_email":"chris@zingel.co.nz",
     "recipient": "chris@zingel.co.nz",
-    "bucket_name": "email-file-attachments-auto3",
+    "bucket_name": "email-file-attachments-auto",
     "subject": "Test Email from Lambda"
 }

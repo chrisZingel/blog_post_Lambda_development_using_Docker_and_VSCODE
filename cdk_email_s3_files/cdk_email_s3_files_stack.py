@@ -16,7 +16,7 @@ class CdkEmailS3FilesStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        
+        image_exists = self.node.try_get_context("image_exists") == "1"
         # Bucket name specified in cdk.json context
         bucket_name = self.node.try_get_context("bucketName")
 
@@ -38,22 +38,22 @@ class CdkEmailS3FilesStack(Stack):
                 max_image_count=1  # Only the most recent untagged image will be retained
                 ) ]) 
 
+        if image_exists:
+            lambda_function = _lambda.DockerImageFunction(self, "MyLambdaFunction",
+                                              function_name="email-file-attachments-auto",
+                                              code=_lambda.DockerImageCode.from_ecr(repository, tag="latest"),
+                                              memory_size=1024,
+                                              timeout=Duration.seconds(60),
+                                              environment={
+                                                  "BUCKET_NAME": bucket.bucket_name
+                                              })
 
-        lambda_function = _lambda.DockerImageFunction(self, "MyLambdaFunction",
-                                          function_name="email-file-attachments-auto",
-                                          code=_lambda.DockerImageCode.from_ecr(repository, tag="latest"),
-                                          memory_size=1024,
-                                          timeout=Duration.seconds(60),
-                                          environment={
-                                              "BUCKET_NAME": bucket.bucket_name
-                                          })
+            lambda_function.role.add_to_policy(
+                    iam.PolicyStatement( actions=["ses:*", "s3:*"],
+                                         resources=[ bucket.bucket_arn, f"{bucket.bucket_arn}/*"]))
 
-        lambda_function.role.add_to_policy(
-                iam.PolicyStatement( actions=["ses:*", "s3:*"],
-                                     resources=[ bucket.bucket_arn, f"{bucket.bucket_arn}/*"]))
-
-        # Set up S3 event notification to trigger Lambda on object creation in a specific "folder"
-        bucket.add_event_notification(
-            s3.EventType.OBJECT_CREATED,  # Trigger on object creation
-            s3_notifications.LambdaDestination(lambda_function)
-        )
+            # Set up S3 event notification to trigger Lambda on object creation in a specific "folder"
+            bucket.add_event_notification(
+                s3.EventType.OBJECT_CREATED,  # Trigger on object creation
+                s3_notifications.LambdaDestination(lambda_function)
+            )

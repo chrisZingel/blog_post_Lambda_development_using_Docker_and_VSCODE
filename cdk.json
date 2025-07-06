@@ -15,7 +15,7 @@
     ]
   },
   "context": {
-    "bucketName": "email-file-attachments-auto3",
+    "bucketName": "email-file-attachments-auto",
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [
