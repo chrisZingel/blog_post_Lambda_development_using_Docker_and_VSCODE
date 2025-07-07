@@ -43,14 +43,16 @@ class CdkEmailS3FilesStack(Stack):
                                               function_name="email-file-attachments-auto",
                                               code=_lambda.DockerImageCode.from_ecr(repository, tag="latest"),
                                               memory_size=1024,
-                                              timeout=Duration.seconds(60),
+                                              timeout=Duration.seconds(61),
                                               environment={
                                                   "BUCKET_NAME": bucket.bucket_name
                                               })
 
             lambda_function.role.add_to_policy(
-                    iam.PolicyStatement( actions=["ses:*", "s3:*"],
+                    iam.PolicyStatement( actions=[ "s3:*"],
                                          resources=[ bucket.bucket_arn, f"{bucket.bucket_arn}/*"]))
+
+            lambda_function.role.add_to_policy(iam.PolicyStatement( actions=["ses:SendRawEmail","ses:*"], resources=[ "*"]));
 
             # Set up S3 event notification to trigger Lambda on object creation in a specific "folder"
             bucket.add_event_notification(
