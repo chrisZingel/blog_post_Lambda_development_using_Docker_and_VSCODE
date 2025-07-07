@@ -43,3 +43,14 @@ cdk deploy --context image_exists=0
 ```
 cdk deploy --context image_exists=1
 ```
+
+Other Gotcha
+✅ Step 2: Build the Docker image for the correct platform
+Use this when building:
+
+docker buildx build --platform linux/amd64 -t email-file-attachments-auto .
+
+
+🔹 You can use linux/arm64 if you're targeting Lambda's Graviton2 option, but linux/amd64 is the safest default.
+
+If you're using Apple Silicon (M1/M2), you must do this — because Docker might default to arm64, which causes this error.
