@@ -1,11 +1,14 @@
 name: CI - Pytest in Docker
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   test:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -17,3 +20,31 @@ jobs:
 
     - name: Run tests in container
       run: docker run --rm my-app-test
+  deploy:
+      name: Deploy to ECR
+      needs: test
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+  
+      - name: Set environment variables
+        run: |
+          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          echo "ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com" >> $GITHUB_ENV
+          echo "Test CEZ"
+  
+      - name: Build Docker image
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+          docker build -t email-file-attachments-auto .
+          docker tag email-file-attachments-auto:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/email-file-attachments-auto:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/email-file-attachments-auto:latest
+          echo "Updating Lambda function with new image"
+          aws lambda update-function-code  --function-name email-file-attachments-auto  --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/email-file-attachments-auto:latest  --region us-east-1 --publish
+    
