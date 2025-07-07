@@ -15,11 +15,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
- #   - name: Build test Docker image
- #     run: docker build -f Dockerfile.test -t my-app-test .
+    - name: Build test Docker image
+      run: docker build -f Dockerfile.test -t my-app-test .
 
- #   - name: Run tests in container
- #     run: docker run --rm my-app-test
+    - name: Run tests in container
+      run: docker run --rm my-app-test
   deploy:
       name: Deploy to ECR
       needs: test
@@ -29,13 +29,6 @@ jobs:
       steps:
       - name: Checkout code
         uses: actions/checkout@v4
-  
- #     - name: Log in to Amazon ECR
- #       uses: aws-actions/amazon-ecr-login@v1
- #       env:
- #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
- #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
- #         AWS_REGION: ${{ secrets.AWS_REGION }}
   
       - name: Build Docker image
         env:
